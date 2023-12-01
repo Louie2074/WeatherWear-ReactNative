@@ -15,7 +15,7 @@ export default function App() {
   const [weather, setWeather] = useState(null)
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  
+
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -41,13 +41,15 @@ export default function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Start" component={StartPage} />
-        <Stack.Screen name="WeatherPage" component={WeatherPage} />
-        <Stack.Screen name="OutfitRecommendation" component={OutfitRecommendation} /> 
-      </Stack.Navigator>
-    </NavigationContainer>
+    <WeatherDataContext.Provider value={weather}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Start" component={StartPage} />
+          <Stack.Screen name="WeatherPage" component={WeatherPage} />
+          <Stack.Screen name="OutfitRecommendation" component={OutfitRecommendation} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </WeatherDataContext.Provider>
   );
 }
 
