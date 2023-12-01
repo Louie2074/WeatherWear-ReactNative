@@ -1,22 +1,30 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Picker } from 'react-native';
 
-const defaultClothingItems = [
-  { name: 'Sneakers', temperature: { min: 30, max: Infinity } },
-  { name: 'Sandals', temperature: { min: 60, max: Infinity } },
-  { name: 'Boots', temperature: { min: -Infinity, max: 30 } },
-  { name: 'Jeans', temperature: { min: 30, max: Infinity } },
-  { name: 'Shorts', temperature: { min: 60, max: Infinity } },
-  { name: 'Sweatpants', temperature: { min: 30, max: Infinity } },
-  { name: 'T-shirt', temperature: { min: 60, max: Infinity } },
-  { name: 'Sweatshirt', temperature: { min: 30, max: 60 } },
-  { name: 'Tanktop', temperature: { min: 60, max: Infinity } },
-  { name: 'Winter Jacket', temperature: { min: -Infinity, max: 30 } },
-];
+const defaultClothingItems = {
+  footwear: [
+    { name: 'Sneakers', temperature: { min: 30, max: Infinity } },
+    { name: 'Sandals', temperature: { min: 60, max: Infinity } },
+    { name: 'Boots', temperature: { min: -Infinity, max: 30 } },
+  ],
+  legs: [
+    { name: 'Jeans', temperature: { min: 30, max: Infinity } },
+    { name: 'Shorts', temperature: { min: 60, max: Infinity } },
+    { name: 'Sweatpants', temperature: { min: 30, max: Infinity } },
+  ],
+  upperBody: [
+    { name: 'T-shirt', temperature: { min: 60, max: Infinity } },
+    { name: 'Sweatshirt', temperature: { min: 30, max: 60 } },
+    { name: 'Tanktop', temperature: { min: 60, max: Infinity } },
+    { name: 'Winter Jacket', temperature: { min: -Infinity, max: 30 } },
+  ],
+};
 
 const OutfitRecommendation = () => {
   const [clothingItem, setClothingItem] = useState('');
   const [preferredTemperature, setPreferredTemperature] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('footwear');
+  const [recommendedItems, setRecommendedItems] = useState({});
 
   const handleRecommendation = () => {
     const temperature = parseFloat(preferredTemperature);
@@ -26,50 +34,67 @@ const OutfitRecommendation = () => {
       return;
     }
 
-    const matchedItem = defaultClothingItems.find(
-      (item) =>
-        item.name.toLowerCase() === clothingItem.toLowerCase() &&
-        temperature >= item.temperature.min &&
-        temperature <= item.temperature.max
+    const categoryItems = defaultClothingItems[selectedCategory];
+    const matchedItem = categoryItems.find(
+      (item) => temperature >= item.temperature.min && temperature <= item.temperature.max
     );
 
     if (matchedItem) {
-      Alert.alert(
-        'Recommendation',
-        `For ${matchedItem.name} at ${temperature}°F, we suggest wearing it when temperatures are between ${matchedItem.temperature.min}°F and ${matchedItem.temperature.max}°F.`,
-        [
-          {
-            text: 'OK',
-            onPress: () => console.log('Recommendation shown'),
-          },
-        ]
-      );
+      setRecommendedItems({ ...recommendedItems, [selectedCategory]: matchedItem });
     } else {
-      Alert.alert('No Recommendation', 'No recommendation found for the entered clothing item and temperature.');
+      Alert.alert('No Recommendation', `No ${selectedCategory} found for the entered temperature.`);
+      setRecommendedItems({});
     }
+  };
+
+  const handleNewOutfit = () => {
+    setPreferredTemperature('');
+    setClothingItem('');
+    setRecommendedItems({});
   };
 
   return (
     <View style={styles.container}>
-      <Text>Enter your clothing and preferred temperature (F):</Text>
+      <Text>Enter your preferred temperature (°F):</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Preferred Temperature"
+        keyboardType="numeric"
+        value={preferredTemperature}
+        onChangeText={(text) => setPreferredTemperature(text)}
+      />
+      <Picker
+        selectedValue={selectedCategory}
+        style={styles.picker}
+        onValueChange={(itemValue) => setSelectedCategory(itemValue)}
+      >
+        <Picker.Item label="Footwear" value="footwear" />
+        <Picker.Item label="Legs" value="legs" />
+        <Picker.Item label="Upper Body" value="upperBody" />
+      </Picker>
       <TextInput
         style={styles.input}
         placeholder="Clothing Item"
         value={clothingItem}
         onChangeText={(text) => setClothingItem(text)}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Preferred Temperature (°F)"
-        keyboardType="numeric"
-        value={preferredTemperature}
-        onChangeText={(text) => setPreferredTemperature(text)}
-      />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleRecommendation}>
+      <TouchableOpacity style={styles.button} onPress={handleRecommendation}>
         <Text style={styles.buttonText}>Get Recommendation</Text>
       </TouchableOpacity>
+
+      {Object.keys(recommendedItems).length > 0 && (
+        <View style={styles.recommendationContainer}>
+          <Text style={styles.recommendationText}>Outfit Recommendation:</Text>
+          {Object.keys(recommendedItems).map((category) => (
+            <Text key={category}>
+              {category}: {recommendedItems[category].name}
+            </Text>
+          ))}
+          <TouchableOpacity style={styles.button} onPress={handleNewOutfit}>
+            <Text style={styles.buttonText}>Request New Outfit</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -94,6 +119,20 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
+  },
+  recommendationContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  recommendationText: {
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  picker: {
+    height: 50,
+    width: 150,
+    borderWidth: 1,
+    margin: 10,
   },
 });
 
