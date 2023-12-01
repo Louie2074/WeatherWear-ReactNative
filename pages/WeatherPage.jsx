@@ -3,11 +3,17 @@ import { View, Text, StyleSheet,TouchableOpacity } from 'react-native';
 import WeatherAPITools from '../weatherTools';
 import WeatherDataContext from '../context/WeatherDataContext';
 export default function WeatherPage() {
-  const { data } = useContext(WeatherDataContext);
-  const weatherTools = new WeatherAPITools();
+  const weatherData = useContext(WeatherDataContext);
+  const weatherTools = new WeatherAPITools(weatherData);
+  
   const handleButtonPress = () => {
-    console.log(data);
+        console.log(weatherTools.getHourlyForecast());
   };
+
+  if (!weatherData) {
+    return <Text>Loading weather data...</Text>; 
+  }
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
