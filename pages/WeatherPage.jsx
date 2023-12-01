@@ -3,10 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import WeatherAPITools from '../weatherTools';
 import WeatherDataContext from '../context/WeatherDataContext';
 import { useNavigation } from '@react-navigation/native';
+
+
 export default function WeatherPage() {
   const weatherData = useContext(WeatherDataContext);
   const weatherTools = new WeatherAPITools(weatherData);
-  
+
   const navigation = useNavigation();
   const handleButtonPress = () => {
      navigation.navigate('OutfitRecommendation');

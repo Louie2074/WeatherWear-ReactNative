@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+
+import WeatherDataContext from '../context/WeatherDataContext';
+import WeatherAPITools from '../weatherTools';
 
 
 const defaultClothingItems = {
@@ -27,6 +30,9 @@ const OutfitRecommendation = () => {
   const [preferredTemperature, setPreferredTemperature] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('footwear');
   const [recommendedItems, setRecommendedItems] = useState({});
+
+  const weatherData = useContext(WeatherDataContext);
+  const tools = new WeatherAPITools(weatherData);
 
   const handleRecommendation = () => {
     const temperature = parseFloat(preferredTemperature);
