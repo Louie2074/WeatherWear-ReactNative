@@ -4,6 +4,8 @@ import StartPage from './pages/StartPage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import WeatherPage from './pages/WeatherPage';
+import OutfitRecommendation from './pages/OutfitRecommendation';
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -12,6 +14,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Start" component={StartPage} />
         <Stack.Screen name="WeatherPage" component={WeatherPage} />
+        <Stack.Screen name="OutfitRecommendation" component={OutfitRecommendation} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );

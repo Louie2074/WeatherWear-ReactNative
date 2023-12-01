@@ -1,18 +1,24 @@
 import { useContext } from 'react';
-import { View, Text, StyleSheet,TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import WeatherAPITools from '../weatherTools';
 import WeatherDataContext from '../context/WeatherDataContext';
-export default function WeatherPage() {
-  const { data } = useContext(WeatherDataContext);
+import OutfitRecommendation from './OutfitRecommendation';
+// Make sure to receive the navigation prop if using React Navigation
+export default function WeatherPage({ navigation }) {
+  //const { data } = useContext(WeatherDataContext);
   const weatherTools = new WeatherAPITools();
+
+  // Updated handleButtonPress to navigate to the OutfitRecommendations screen
   const handleButtonPress = () => {
-    console.log(data);
+    // Use the navigation prop to navigate to the OutfitRecommendations screen
+    navigation.navigate('OutfitRecommendation');
   };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.buttonContainer}
-        onPress={handleButtonPress}
+        onPress={handleButtonPress} // Updated to handle navigation
       >
         <Text style={styles.buttonText}>Enter</Text>
       </TouchableOpacity>
