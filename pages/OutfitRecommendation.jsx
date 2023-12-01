@@ -26,51 +26,48 @@ const defaultClothingItems = {
 };
 
 const OutfitRecommendation = () => {
-  const [clothingItem, setClothingItem] = useState('');
-  const [preferredTemperature, setPreferredTemperature] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('footwear');
   const [recommendedItems, setRecommendedItems] = useState({});
 
   const weatherData = useContext(WeatherDataContext);
   const tools = new WeatherAPITools(weatherData);
 
-  const handleRecommendation = () => {
-    const temperature = parseFloat(preferredTemperature);
+  useEffect(() => {
+    const fetchWeatherAndRecommendOutfit = async () => {
+      try {
+        const currentTemp = await tools.getCurrentTemperature(); // Assuming this method exists and returns the current temperature
+        recommendOutfitBasedOnTemperature(currentTemp);
+      } catch (error) {
+        Alert.alert('Error', 'Failed to fetch weather data.');
+      }
+    };
 
-    if (isNaN(temperature)) {
-      Alert.alert('Error', 'Please enter a valid temperature.');
-      return;
-    }
+    fetchWeatherAndRecommendOutfit();
+  }, []);
 
-    const categoryItems = defaultClothingItems[selectedCategory];
-    const matchedItem = categoryItems.find(
-      (item) => temperature >= item.temperature.min && temperature <= item.temperature.max
-    );
+  const recommendOutfitBasedOnTemperature = (temperature) => {
+    let newRecommendedItems = {};
 
-    if (matchedItem) {
-      setRecommendedItems({ ...recommendedItems, [selectedCategory]: matchedItem });
-    } else {
-      Alert.alert('No Recommendation', `No ${selectedCategory} found for the entered temperature.`);
-      setRecommendedItems({});
-    }
+    Object.keys(defaultClothingItems).forEach(category => {
+      const categoryItems = defaultClothingItems[category];
+      const matchedItem = categoryItems.find(
+        (item) => temperature >= item.temperature.min && temperature <= item.temperature.max
+      );
+
+      if (matchedItem) {
+        newRecommendedItems[category] = matchedItem;
+      }
+    });
+
+    setRecommendedItems(newRecommendedItems);
   };
 
   const handleNewOutfit = () => {
-    setPreferredTemperature('');
-    setClothingItem('');
     setRecommendedItems({});
   };
 
   return (
     <View style={styles.container}>
-      <Text>Enter your preferred temperature (°F):</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Preferred Temperature"
-        keyboardType="numeric"
-        value={preferredTemperature}
-        onChangeText={(text) => setPreferredTemperature(text)}
-      />
       <Picker
         selectedValue={selectedCategory}
         style={styles.picker}
@@ -80,15 +77,6 @@ const OutfitRecommendation = () => {
         <Picker.Item label="Legs" value="legs" />
         <Picker.Item label="Upper Body" value="upperBody" />
       </Picker>
-      <TextInput
-        style={styles.input}
-        placeholder="Clothing Item"
-        value={clothingItem}
-        onChangeText={(text) => setClothingItem(text)}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleRecommendation}>
-        <Text style={styles.buttonText}>Get Recommendation</Text>
-      </TouchableOpacity>
 
       {Object.keys(recommendedItems).length > 0 && (
         <View style={styles.recommendationContainer}>
