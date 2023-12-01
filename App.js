@@ -7,6 +7,7 @@ import WeatherPage from './pages/WeatherPage';
 import WeatherDataContext from './context/WeatherDataContext';
 import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
+import OutfitRecommendation from './pages/OutfitRecommendation';
 
 const Stack = createStackNavigator();
 
@@ -40,14 +41,13 @@ export default function App() {
   }, []);
 
   return (
-    <WeatherDataContext.Provider value={weather}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Start" component={StartPage} />
-          <Stack.Screen name="WeatherPage" component={WeatherPage} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </WeatherDataContext.Provider>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Start" component={StartPage} />
+        <Stack.Screen name="WeatherPage" component={WeatherPage} />
+        <Stack.Screen name="OutfitRecommendation" component={OutfitRecommendation} /> 
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

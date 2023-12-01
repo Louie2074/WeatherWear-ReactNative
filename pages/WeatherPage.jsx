@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { View, Text, StyleSheet,TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import WeatherAPITools from '../weatherTools';
 import WeatherDataContext from '../context/WeatherDataContext';
 export default function WeatherPage() {
@@ -18,7 +18,7 @@ export default function WeatherPage() {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.buttonContainer}
-        onPress={handleButtonPress}
+        onPress={handleButtonPress} // Updated to handle navigation
       >
         <Text style={styles.buttonText}>Enter</Text>
       </TouchableOpacity>
