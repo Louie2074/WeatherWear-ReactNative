@@ -22,7 +22,7 @@ export default function WeatherPage() {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.buttonContainer}
-        onPress={handleButtonPress} // Updated to handle navigation
+        onPress={handleButtonPress} 
       >
         <Text style={styles.buttonText}>Enter</Text>
       </TouchableOpacity>

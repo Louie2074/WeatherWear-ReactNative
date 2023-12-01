@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import LocationDataContext from '../context/LocationDataContext';
 
 const Settings = () => {
+  const [location, setLocation] = useContext(LocationDataContext);
+  
   return (
     <View style={styles.container}>
       <Text>Your Component Content Goes Here</Text>

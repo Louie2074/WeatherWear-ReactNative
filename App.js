@@ -8,6 +8,7 @@ import WeatherDataContext from './context/WeatherDataContext';
 import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import OutfitRecommendation from './pages/OutfitRecommendation';
+import LocationDataContext from './context/LocationDataContext';
 
 const Stack = createStackNavigator();
 
@@ -38,9 +39,10 @@ export default function App() {
         console.error('Error fetching location or weather data: ', error);
       }
     })();
-  }, []);
+  }, [location]);
 
   return (
+    <LocationDataContext.Provider value={{location,setLocation}}>
     <WeatherDataContext.Provider value={weather}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
@@ -50,6 +52,7 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </WeatherDataContext.Provider>
+    </LocationDataContext.Provider>
   );
 }
 
