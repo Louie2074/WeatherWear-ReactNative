@@ -13,7 +13,7 @@ export default class WeatherAPITools {
 
     getCurrentWeather() {
         const obj = this.json.current;
-        return [obj.temp_f.toString(), obj.condition.text];
+        return [obj.temp_f.toString(), obj.condition.text, obj.condition.icon];
     }
 
     getMinMaxTemp() {
