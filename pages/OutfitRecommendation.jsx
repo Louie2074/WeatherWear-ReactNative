@@ -47,9 +47,9 @@ const OutfitRecommendation = () => {
     }
   };
 
-  useEffect(() => {
-    fetchWeatherDetailsAndRecommendOutfit();
-  }, [weatherData]);
+  //useEffect(() => {
+  //  fetchWeatherDetailsAndRecommendOutfit();
+  //}, [weatherData]);
 
   const recommendOutfitBasedOnTemperature = (temperature) => {
     let newRecommendedItems = {};
