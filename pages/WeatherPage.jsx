@@ -32,7 +32,7 @@ export default function WeatherPage() {
 
   return (
     <View style={styles.container}>
-      <Text>{locationDetails[0]}, {locationDetails[1]}</Text>
+      <Text style={{marginBottom: 10}}>{locationDetails[0]}, {locationDetails[1]}</Text>
       <Text>{currentWeather[0]}°F</Text>
       <Text>{currentWeather[1]}</Text>
       <View style={styles.rowContainer}>
