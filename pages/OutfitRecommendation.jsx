@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-
 import WeatherDataContext from '../context/WeatherDataContext';
 import WeatherAPITools from '../weatherTools';
 
