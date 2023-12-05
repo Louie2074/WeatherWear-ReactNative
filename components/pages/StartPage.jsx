@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import {
   View,
   Text,
@@ -6,17 +6,18 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import FirstLaunchContext from '../../context/FirstLaunchContext';
 
 export default function StartPage() {
-  const navigation = useNavigation();
+  const { isFirstLaunch, setIsFirstLaunch } = useContext(FirstLaunchContext);
+
   const handleButtonPress = () => {
-    navigation.navigate('WeatherPage');
+    setIsFirstLaunch(false);
   };
 
   return (
     <ImageBackground
-      source={require('../assets/weatherwearlogo.jpeg')}
+      source={require('../../assets/weatherwearlogo.jpeg')}
       style={styles.background}
       resizeMode="cover"
     >
