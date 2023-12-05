@@ -4,7 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 
 import WeatherDataContext from '../context/WeatherDataContext';
 import WeatherAPITools from '../weatherTools';
-
+import AddClothes from './AddClothes'
 const defaultClothingItems = {
   Tops: [
     { name: 'T-shirt', temperature: { min: 60, max: Infinity } },
@@ -28,6 +28,9 @@ const defaultClothingItems = {
 };
 
 const OutfitRecommendation = () => {
+  const [addingClothes, setAddingClothes] = useState(false);
+  const [wardrobe, setWardrobe] = useState({ Tops: [], Bottoms: [], Footwear: [] });
+
   const [recommendedItems, setRecommendedItems] = useState({});
   const [currentTemperature, setCurrentTemperature] = useState('');
   const [cityAndState, setCityAndState] = useState('');
@@ -67,9 +70,27 @@ const OutfitRecommendation = () => {
 
     setRecommendedItems(newRecommendedItems);
   };
-
+    // Function to add a new clothing item to the wardrobe
+    const handleAddClothes = (newItem) => {
+      if (wardrobe[newItem.category] === undefined) {
+        Alert.alert('Error', 'Invalid category');
+        return;
+      }
+    
+      setWardrobe((currentWardrobe) => {
+        return {
+          ...currentWardrobe,
+          [newItem.category]: [...currentWardrobe[newItem.category], newItem],
+        };
+      });
+    };
+    
   return (
     <View style={styles.container}>
+            {addingClothes ? (
+        <AddClothes onAddClothes={handleAddClothes} onFinish={() => setAddingClothes(false)} />
+      ) : (
+        <>
       <Text style={styles.locationText}>
         Location: {cityAndState}
       </Text>
@@ -89,6 +110,11 @@ const OutfitRecommendation = () => {
       <TouchableOpacity style={styles.button} onPress={fetchWeatherDetailsAndRecommendOutfit}>
         <Text style={styles.buttonText}>Generate New Outfit</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => setAddingClothes(true)}>
+            <Text style={styles.buttonText}>Add Clothes</Text>
+          </TouchableOpacity>
+          </>
+      )}
     </View>
   );
 };
