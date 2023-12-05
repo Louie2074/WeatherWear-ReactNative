@@ -2,24 +2,29 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
 const AddClothes = ({ onAddClothes, onFinish }) => {
-  const [name, setName] = useState('');
-  const [category, setCategory] = useState('Top'); // Default category
-  const [temperature, setTemperature] = useState('');
-
-  const categories = ['Top', 'Bottom', 'Footwear'];
-
-  const handleAdd = () => {
-    onAddClothes({ name, category, temperature: parseTemperature(temperature) });
-    setName('');
-    setCategory('Top');
-    setTemperature('');
-    onFinish();
-  };
-
-  const parseTemperature = (tempRange) => {
-    const [min, max] = tempRange.split('-').map(Number);
-    return { min, max };
-  };
+    const [name, setName] = useState('');
+    const [category, setCategory] = useState('Tops'); // Default category updated to 'Tops'
+    const [minTemperature, setMinTemperature] = useState('');
+    const [maxTemperature, setMaxTemperature] = useState('');
+    const [color, setColor] = useState('');
+  
+    const categories = ['Tops', 'Bottoms', 'Footwear'];
+  
+    const handleAdd = () => {
+      onAddClothes({
+        name,
+        category,
+        temperature: { min: Number(minTemperature), max: Number(maxTemperature) },
+        color
+      });
+      setName('');
+      setCategory('Tops');
+      setMinTemperature('');
+      setMaxTemperature('');
+      setColor('');
+      
+      onFinish();
+    };
 
   return (
     <View style={styles.container}>
@@ -47,12 +52,30 @@ const AddClothes = ({ onAddClothes, onFinish }) => {
       </View>
 
       <Text style={styles.label}>Temperature Range:</Text>
+      <View style={styles.temperatureInputContainer}>
+        <TextInput
+          style={[styles.input, styles.temperatureInput]}
+          value={minTemperature}
+          onChangeText={setMinTemperature}
+          placeholder="Min Temp"
+          keyboardType="numeric"
+        />
+        <Text style={styles.hyphen}>-</Text>
+        <TextInput
+          style={[styles.input, styles.temperatureInput]}
+          value={maxTemperature}
+          onChangeText={setMaxTemperature}
+          placeholder="Max Temp"
+          keyboardType="numeric"
+        />
+      </View>
+
+      <Text style={styles.label}>Color:</Text>
       <TextInput
         style={styles.input}
-        value={temperature}
-        onChangeText={setTemperature}
-        placeholder="Enter temperature range (e.g., 60-75)"
-        keyboardType="numeric"
+        value={color}
+        onChangeText={setColor}
+        placeholder="Enter color"
       />
 
       <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
@@ -112,7 +135,15 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: 'white',
+  }, temperatureInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
   },
+  temperatureInput: {
+    width: '10%', // Adjust width as needed
+  },
+
 });
 
 export default AddClothes;

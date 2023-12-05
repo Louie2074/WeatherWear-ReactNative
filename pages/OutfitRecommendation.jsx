@@ -56,67 +56,92 @@ const OutfitRecommendation = () => {
 
   const recommendOutfitBasedOnTemperature = (temperature) => {
     let newRecommendedItems = {};
-
-    Object.keys(defaultClothingItems).forEach(category => {
-      const shuffledItems = [...defaultClothingItems[category]].sort(() => 0.5 - Math.random());
-      const matchedItem = shuffledItems.find(
-        (item) => temperature >= item.temperature.min && temperature <= item.temperature.max
-      );
-
+  
+    Object.keys(wardrobe).forEach(category => {
+      const matchedItem = wardrobe[category].find(item => {
+        const minTemp = item.temperature.min;
+        const maxTemp = item.temperature.max === Infinity ? Number.MAX_VALUE : item.temperature.max;
+        
+        return temperature >= minTemp && temperature <= maxTemp;
+      });
+  
       if (matchedItem) {
-        newRecommendedItems[category] = matchedItem;
+        newRecommendedItems[category] = `${matchedItem.color} ${matchedItem.name}`;
+      } else {
+        newRecommendedItems[category] = 'No item found';
       }
+  
+      // Log the temperature range for each item in the category for debugging
+      console.log(`Category: ${category}, Items:`, wardrobe[category].map(item => `${item.name}: ${item.temperature.min} to ${item.temperature.max}`));
     });
-
+  
+    console.log('Current Temperature:', temperature);
+    console.log('New Recommended Items:', newRecommendedItems);
     setRecommendedItems(newRecommendedItems);
   };
+  
+  
     // Function to add a new clothing item to the wardrobe
     const handleAddClothes = (newItem) => {
-      if (wardrobe[newItem.category] === undefined) {
+      console.log('Adding new item:', newItem);
+      if (!wardrobe[newItem.category]) {
         Alert.alert('Error', 'Invalid category');
         return;
       }
     
-      setWardrobe((currentWardrobe) => {
-        return {
+      setWardrobe(currentWardrobe => {
+        const updatedWardrobe = {
           ...currentWardrobe,
           [newItem.category]: [...currentWardrobe[newItem.category], newItem],
         };
+        console.log('Updated wardrobe:', updatedWardrobe);
+        return updatedWardrobe;
       });
     };
     
-  return (
-    <View style={styles.container}>
-            {addingClothes ? (
-        <AddClothes onAddClothes={handleAddClothes} onFinish={() => setAddingClothes(false)} />
-      ) : (
-        <>
-      <Text style={styles.locationText}>
-        Location: {cityAndState}
-      </Text>
-      <Text style={styles.temperatureText}>
-        Current Temperature: {currentTemperature}°F
-      </Text>
-      {Object.keys(recommendedItems).length > 0 && (
-        <View style={styles.recommendationContainer}>
-          <Text style={styles.recommendationText}>Outfit Recommendation:</Text>
-          {Object.keys(recommendedItems).map((category) => (
-            <Text key={category}>
-              {category.charAt(0).toUpperCase() + category.slice(1)}: {recommendedItems[category].name}
+    return (
+      <View style={styles.container}>
+        {addingClothes ? (
+          <AddClothes onAddClothes={handleAddClothes} onFinish={() => setAddingClothes(false)} />
+        ) : (
+          <>
+            <Text style={styles.locationText}>
+              Location: {cityAndState}
             </Text>
-          ))}
-        </View>
-      )}
-      <TouchableOpacity style={styles.button} onPress={fetchWeatherDetailsAndRecommendOutfit}>
-        <Text style={styles.buttonText}>Generate New Outfit</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => setAddingClothes(true)}>
-            <Text style={styles.buttonText}>Add Clothes</Text>
-          </TouchableOpacity>
+            <Text style={styles.temperatureText}>
+              Current Temperature: {currentTemperature}°F
+            </Text>
+            {Object.keys(recommendedItems).length > 0 && (
+              <View style={styles.recommendationContainer}>
+                <Text style={styles.recommendationText}>Outfit Recommendation:</Text>
+                {Object.keys(recommendedItems).map((category) => {
+                  const item = recommendedItems[category];
+                  // Check if the item and its temperature property are defined
+                  const tempRange = item && item.temperature 
+                    ? ` (Temp Range: ${item.temperature.min}-${item.temperature.max})` 
+                    : '';
+    
+                  return (
+                    <Text key={category}>
+                      {category.charAt(0).toUpperCase() + category.slice(1)}: 
+                      {item ? `${item.name} (Color: ${item.color}${tempRange})` : 'No item found'}
+                    </Text>
+                  );
+                })}
+              </View>
+            )}
+    
+            <TouchableOpacity style={styles.button} onPress={fetchWeatherDetailsAndRecommendOutfit}>
+              <Text style={styles.buttonText}>Generate New Outfit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => setAddingClothes(true)}>
+              <Text style={styles.buttonText}>Add Clothes</Text>
+            </TouchableOpacity>
           </>
-      )}
-    </View>
-  );
+        )}
+      </View>
+    );
+    
 };
 
 const styles = StyleSheet.create({
