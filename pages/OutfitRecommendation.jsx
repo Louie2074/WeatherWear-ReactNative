@@ -115,21 +115,20 @@ const OutfitRecommendation = () => {
               <View style={styles.recommendationContainer}>
                 <Text style={styles.recommendationText}>Outfit Recommendation:</Text>
                 {Object.keys(recommendedItems).map((category) => {
-                  const item = recommendedItems[category];
-                  // Check if the item and its temperature property are defined
-                  const tempRange = item && item.temperature 
-                    ? ` (Temp Range: ${item.temperature.min}-${item.temperature.max})` 
-                    : '';
-    
+                  // Extract the item string from recommendedItems
+                  const itemString = recommendedItems[category];
+                
                   return (
                     <Text key={category}>
                       {category.charAt(0).toUpperCase() + category.slice(1)}: 
-                      {item ? `${item.name} (Color: ${item.color}${tempRange})` : 'No item found'}
+                      {itemString !== 'No item found' ? itemString : `No suitable ${category.toLowerCase()} found`}
                     </Text>
                   );
                 })}
               </View>
             )}
+
+
     
             <TouchableOpacity style={styles.button} onPress={fetchWeatherDetailsAndRecommendOutfit}>
               <Text style={styles.buttonText}>Generate New Outfit</Text>
