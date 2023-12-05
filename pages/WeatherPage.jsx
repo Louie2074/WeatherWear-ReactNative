@@ -1,9 +1,9 @@
 import { useContext, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import WeatherAPITools from '../weatherTools';
 import WeatherDataContext from '../context/WeatherDataContext';
 import { useNavigation } from '@react-navigation/native';
-
+import Images from './imgIndex';
 
 export default function WeatherPage() {
   const weatherData = useContext(WeatherDataContext);
@@ -22,8 +22,10 @@ export default function WeatherPage() {
   const currentWeather = weatherTools.getCurrentWeather();
   const lowAndHigh = weatherTools.getMinMaxTemp();
   const hourlyForecast = weatherTools.getHourlyForecast();
+  const sep = currentWeather[2].split("/")
+  const iconImgPath = sep[5].substring(0, 1) + sep[6].substring(0, 3)
 
-  useEffect(() => console.log(hourlyForecast), [])
+  // useEffect(() => console.log(iconImgPath), [])
 
   const convertEpochTime = (epochTime) => {
     const time = new Date(Number(epochTime * 1000))
@@ -32,18 +34,22 @@ export default function WeatherPage() {
 
   return (
     <View style={styles.container}>
-      <Text>{locationDetails[0]}, {locationDetails[1]}</Text>
-      <Text>{currentWeather[0]}°F</Text>
-      <Text>{currentWeather[1]}</Text>
+      <Text style={{fontSize: 28}}>{locationDetails[0]}, {locationDetails[1]}</Text>
+      <Text style={{fontSize: 36, marginTop: 5}}>{currentWeather[0]}°F</Text>
+      <Image 
+        source={Images[iconImgPath]}
+        style={{height: 128, width: 128}}
+      />
+      <Text style={{fontSize: 18, marginVertical: 2}}>{currentWeather[1]}</Text>
       <View style={styles.rowContainer}>
-        <Text style={{marginHorizontal: 5}}>Low: {lowAndHigh[0]}</Text>
-        <Text style={{marginHorizontal: 5}}>High: {lowAndHigh[1]}</Text>
+        <Text style={{marginHorizontal: 5}}>Low: {lowAndHigh[0]}°F</Text>
+        <Text style={{marginHorizontal: 5}}>High: {lowAndHigh[1]}°F</Text>
       </View>
+      <Text style={{fontSize: 22, marginTop: 35}}>Hourly Forecast:</Text>
       <View style={styles.hourlyForecastContainer}>
-        <Text>Hourly Forecast:</Text>
-        {hourlyForecast.map((hour) => {
+        {hourlyForecast.map((hour, index) => {
           return (
-            <Text>{convertEpochTime(hour.hourEpoch)}: {hour.temp}°F</Text>
+            <Text key={index} style={{marginVertical: 2}}>{convertEpochTime(hour.hourEpoch)}: {hour.temp}°F</Text>
           )
         })}
       </View>
@@ -86,6 +92,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   hourlyForecastContainer: {
-    marginTop: 50,
+    justifyContent: 'center',
+    alignContent: 'center',
   },
 });
