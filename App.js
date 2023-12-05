@@ -1,14 +1,15 @@
 
 import { StyleSheet, Text, View, Button, Image, ImageBackground } from 'react-native';
-import StartPage from './pages/StartPage';
+import StartPage from './components/pages/StartPage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import WeatherPage from './pages/WeatherPage';
+import WeatherPage from './components/pages/WeatherPage';
 import WeatherDataContext from './context/WeatherDataContext';
 import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
-import OutfitRecommendation from './pages/OutfitRecommendation';
+import OutfitRecommendation from './components/pages/OutfitRecommendation';
 import LocationDataContext from './context/LocationDataContext';
+import Tabs from './components/navigation/Tabs'
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ export default function App() {
   const [weather, setWeather] = useState(null)
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [isFirstLaunch, setIsFirstLaunch] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -42,16 +44,18 @@ export default function App() {
   }, [location]);
 
   return (
-    <LocationDataContext.Provider value={{location,setLocation}}>
-    <WeatherDataContext.Provider value={weather}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Start" component={StartPage} />
-          <Stack.Screen name="WeatherPage" component={WeatherPage} />
-          <Stack.Screen name="OutfitRecommendation" component={OutfitRecommendation} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </WeatherDataContext.Provider>
+    <LocationDataContext.Provider value={{ location, setLocation }}>
+      <WeatherDataContext.Provider value={weather}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {isFirstLaunch ? (
+              <Stack.Screen name="Start" component={StartPage} initialParams={{ setIsFirstLaunch }} />
+            ) : (
+              <Stack.Screen name="Main" component={Tabs} />
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </WeatherDataContext.Provider>
     </LocationDataContext.Provider>
   );
 }
