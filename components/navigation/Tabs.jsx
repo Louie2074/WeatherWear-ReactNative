@@ -1,10 +1,9 @@
-// Tabs.js
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import WeatherPage from '../pages/WeatherPage';
 import Settings from '../pages/Settings';
 import OutfitRecommendation from '../pages/OutfitRecommendation';
-import HomeStackNavigator from './HomeStackNavigator'; // Import your Stack Navigator here
 
 const Tab = createBottomTabNavigator();
 

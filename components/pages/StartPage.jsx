@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import {
   View,
   Text,
@@ -6,12 +6,13 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
+import FirstLaunchContext from '../../context/FirstLaunchContext';
 
-export default function StartPage({route }) {
-  const { setIsFirstLaunch } = route.params;
-  
+export default function StartPage() {
+  const { isFirstLaunch, setIsFirstLaunch } = useContext(FirstLaunchContext);
+
   const handleButtonPress = () => {
-    setIsFirstLaunch(false)
+    setIsFirstLaunch(false);
   };
 
   return (

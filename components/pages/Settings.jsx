@@ -1,20 +1,18 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet,Button } from 'react-native';
-import LocationDataContext from '../../context/LocationDataContext';
+import { Button, StyleSheet, View, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const Settings = () => {
-  const location = useContext(LocationDataContext);
-  const handleButton = ()=>{
-    console.log(location);
-  }
+  const navigation = useNavigation();
+  const handleClearData = () => {
+    Alert.alert('Data Cleared', 'All user data has been successfully cleared.');
+  };
   return (
-    <View style={styles.container}>
+    <View>
       <Button
-        onPress={handleButton}
-        title="Learn More"
-        color="#841584"
-        accessibilityLabel="Learn more about this purple button"
+        title="Change Location"
+        onPress={() => navigation.navigate('ChangeLocation')}
       />
+      <Button title="Clear Data" onPress={handleClearData} />
     </View>
   );
 };
@@ -24,6 +22,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 10,
   },
 });
 
