@@ -58,27 +58,27 @@ const OutfitRecommendation = () => {
     let newRecommendedItems = {};
   
     Object.keys(wardrobe).forEach(category => {
-      const matchedItem = wardrobe[category].find(item => {
+      // Filter all items that match the temperature criteria
+      const matchingItems = wardrobe[category].filter(item => {
         const minTemp = item.temperature.min;
         const maxTemp = item.temperature.max === Infinity ? Number.MAX_VALUE : item.temperature.max;
         
         return temperature >= minTemp && temperature <= maxTemp;
       });
   
-      if (matchedItem) {
+      // Randomly select one of the matching items
+      if (matchingItems.length > 0) {
+        const randomIndex = Math.floor(Math.random() * matchingItems.length);
+        const matchedItem = matchingItems[randomIndex];
         newRecommendedItems[category] = `${matchedItem.color} ${matchedItem.name}`;
       } else {
         newRecommendedItems[category] = 'No item found';
       }
-  
-      // Log the temperature range for each item in the category for debugging
-      console.log(`Category: ${category}, Items:`, wardrobe[category].map(item => `${item.name}: ${item.temperature.min} to ${item.temperature.max}`));
     });
-  
-    console.log('Current Temperature:', temperature);
-    console.log('New Recommended Items:', newRecommendedItems);
+    console.log(newRecommendedItems);
     setRecommendedItems(newRecommendedItems);
   };
+  
   
   
     // Function to add a new clothing item to the wardrobe
