@@ -1,9 +1,9 @@
 import { useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import WeatherAPITools from '../../weatherTools';
+import WeatherAPITools from '../../utils/weatherTools';
 import WeatherDataContext from '../../context/WeatherDataContext';
 import { useNavigation } from '@react-navigation/native';
-import Images from '../../imgIndex';
+import Images from '../../utils/imgIndex';
 
 export default function WeatherPage() {
   const weatherData = useContext(WeatherDataContext);

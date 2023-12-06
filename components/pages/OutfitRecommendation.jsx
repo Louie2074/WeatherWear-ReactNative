@@ -1,16 +1,9 @@
 import React, { useContext, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-} from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
 import WeatherDataContext from '../../context/WeatherDataContext';
-import WeatherAPITools from '../../weatherTools';
+import WeatherAPITools from '../../utils/weatherTools';
+import AddClothes from '../AddClothes';
 
 const defaultClothingItems = {
   Tops: [
@@ -35,91 +28,134 @@ const defaultClothingItems = {
 };
 
 const OutfitRecommendation = () => {
-  const [clothingItem, setClothingItem] = useState('');
-  const [preferredTemperature, setPreferredTemperature] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('footwear');
+  const [addingClothes, setAddingClothes] = useState(false);
+  const [wardrobe, setWardrobe] = useState({
+    Tops: [],
+    Bottoms: [],
+    Footwear: [],
+  });
+
   const [recommendedItems, setRecommendedItems] = useState({});
   const [currentTemperature, setCurrentTemperature] = useState('');
   const [cityAndState, setCityAndState] = useState('');
   const weatherData = useContext(WeatherDataContext);
-  const tools = new WeatherAPITools(weatherData);
 
-  const handleRecommendation = () => {
-    const temperature = parseFloat(preferredTemperature);
+  const fetchWeatherDetailsAndRecommendOutfit = async () => {
+    try {
+      const tools = new WeatherAPITools(weatherData);
+      const [temp] = tools.getCurrentWeather();
+      setCurrentTemperature(temp);
+      recommendOutfitBasedOnTemperature(parseFloat(temp));
 
-    if (isNaN(temperature)) {
-      Alert.alert('Error', 'Please enter a valid temperature.');
-      return;
-    }
-
-    const categoryItems = defaultClothingItems[selectedCategory];
-    const matchedItem = categoryItems.find(
-      (item) =>
-        temperature >= item.temperature.min &&
-        temperature <= item.temperature.max
-    );
-
-    if (matchedItem) {
-      setRecommendedItems({
-        ...recommendedItems,
-        [selectedCategory]: matchedItem,
-      });
-    } else {
+      const [city, state] = tools.getLocationDetails();
+      setCityAndState(`${city}, ${state}`);
+    } catch (error) {
       Alert.alert(
-        'No Recommendation',
-        `No ${selectedCategory} found for the entered temperature.`
+        'Error',
+        `Failed to fetch weather data: ${error.message || error}`
       );
-      setRecommendedItems({});
     }
   };
 
-  const handleNewOutfit = () => {
-    setPreferredTemperature('');
-    setClothingItem('');
-    setRecommendedItems({});
+  //useEffect(() => {
+  //  fetchWeatherDetailsAndRecommendOutfit();
+  //}, [weatherData]);
+
+  const recommendOutfitBasedOnTemperature = (temperature) => {
+    let newRecommendedItems = {};
+
+    Object.keys(wardrobe).forEach((category) => {
+      // Filter all items that match the temperature criteria
+      const matchingItems = wardrobe[category].filter((item) => {
+        const minTemp = item.temperature.min;
+        const maxTemp =
+          item.temperature.max === Infinity
+            ? Number.MAX_VALUE
+            : item.temperature.max;
+
+        return temperature >= minTemp && temperature <= maxTemp;
+      });
+
+      // Randomly select one of the matching items
+      if (matchingItems.length > 0) {
+        const randomIndex = Math.floor(Math.random() * matchingItems.length);
+        const matchedItem = matchingItems[randomIndex];
+        newRecommendedItems[
+          category
+        ] = `${matchedItem.color} ${matchedItem.name}`;
+      } else {
+        newRecommendedItems[category] = 'No item found';
+      }
+    });
+    console.log(newRecommendedItems);
+    setRecommendedItems(newRecommendedItems);
+  };
+
+  // Function to add a new clothing item to the wardrobe
+  const handleAddClothes = (newItem) => {
+    console.log('Adding new item:', newItem);
+    if (!wardrobe[newItem.category]) {
+      Alert.alert('Error', 'Invalid category');
+      return;
+    }
+
+    setWardrobe((currentWardrobe) => {
+      const updatedWardrobe = {
+        ...currentWardrobe,
+        [newItem.category]: [...currentWardrobe[newItem.category], newItem],
+      };
+      console.log('Updated wardrobe:', updatedWardrobe);
+      return updatedWardrobe;
+    });
   };
 
   return (
     <View style={styles.container}>
-      <Text>Enter your preferred temperature (°F):</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Preferred Temperature"
-        keyboardType="numeric"
-        value={preferredTemperature}
-        onChangeText={(text) => setPreferredTemperature(text)}
-      />
-      <Picker
-        selectedValue={selectedCategory}
-        style={styles.picker}
-        onValueChange={(itemValue) => setSelectedCategory(itemValue)}
-      >
-        <Picker.Item label="Footwear" value="footwear" />
-        <Picker.Item label="Legs" value="legs" />
-        <Picker.Item label="Upper Body" value="upperBody" />
-      </Picker>
-      <TextInput
-        style={styles.input}
-        placeholder="Clothing Item"
-        value={clothingItem}
-        onChangeText={(text) => setClothingItem(text)}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleRecommendation}>
-        <Text style={styles.buttonText}>Get Recommendation</Text>
-      </TouchableOpacity>
+      {addingClothes ? (
+        <AddClothes
+          onAddClothes={handleAddClothes}
+          onFinish={() => setAddingClothes(false)}
+        />
+      ) : (
+        <>
+          <Text style={styles.locationText}>Location: {cityAndState}</Text>
+          <Text style={styles.temperatureText}>
+            Current Temperature: {currentTemperature}°F
+          </Text>
+          {Object.keys(recommendedItems).length > 0 && (
+            <View style={styles.recommendationContainer}>
+              <Text style={styles.recommendationText}>
+                Outfit Recommendation:
+              </Text>
+              {Object.keys(recommendedItems).map((category) => {
+                // Extract the item string from recommendedItems
+                const itemString = recommendedItems[category];
 
-      {Object.keys(recommendedItems).length > 0 && (
-        <View style={styles.recommendationContainer}>
-          <Text style={styles.recommendationText}>Outfit Recommendation:</Text>
-          {Object.keys(recommendedItems).map((category) => (
-            <Text key={category}>
-              {category}: {recommendedItems[category].name}
-            </Text>
-          ))}
-          <TouchableOpacity style={styles.button} onPress={handleNewOutfit}>
-            <Text style={styles.buttonText}>Request New Outfit</Text>
+                return (
+                  <Text key={category}>
+                    {category.charAt(0).toUpperCase() + category.slice(1)}:
+                    {itemString !== 'No item found'
+                      ? itemString
+                      : `No suitable ${category.toLowerCase()} found`}
+                  </Text>
+                );
+              })}
+            </View>
+          )}
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={fetchWeatherDetailsAndRecommendOutfit}
+          >
+            <Text style={styles.buttonText}>Generate New Outfit</Text>
           </TouchableOpacity>
-        </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setAddingClothes(true)}
+          >
+            <Text style={styles.buttonText}>Add Clothes</Text>
+          </TouchableOpacity>
+        </>
       )}
     </View>
   );
