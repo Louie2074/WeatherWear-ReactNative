@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -13,69 +13,82 @@ import WeatherDataContext from '../../context/WeatherDataContext';
 import WeatherAPITools from '../../weatherTools';
 
 const defaultClothingItems = {
-  footwear: [
-    { name: 'Sneakers', temperature: { min: 30, max: Infinity } },
-    { name: 'Sandals', temperature: { min: 60, max: Infinity } },
-    { name: 'Boots', temperature: { min: -Infinity, max: 30 } },
+  Tops: [
+    { name: 'T-shirt', temperature: { min: 60, max: Infinity } },
+    { name: 'Sweatshirt', temperature: { min: 35, max: 60 } },
+    { name: 'Tanktop', temperature: { min: 60, max: Infinity } },
+    { name: 'Puffer Jacket', temperature: { min: -Infinity, max: 35 } },
+    { name: 'Parka', temperature: { min: -Infinity, max: 35 } },
   ],
-  legs: [
-    { name: 'Jeans', temperature: { min: 30, max: Infinity } },
+  Bottoms: [
+    { name: 'Jeans', temperature: { min: -Infinity, max: Infinity } },
     { name: 'Shorts', temperature: { min: 60, max: Infinity } },
     { name: 'Sweatpants', temperature: { min: 30, max: Infinity } },
+    { name: 'Cargo Pants', temperature: { min: 30, max: Infinity } },
   ],
-  upperBody: [
-    { name: 'T-shirt', temperature: { min: 60, max: Infinity } },
-    { name: 'Sweatshirt', temperature: { min: 30, max: 60 } },
-    { name: 'Tanktop', temperature: { min: 60, max: Infinity } },
-    { name: 'Winter Jacket', temperature: { min: -Infinity, max: 30 } },
+  Footwear: [
+    { name: 'Sneakers', temperature: { min: 30, max: Infinity } },
+    { name: 'Sandals', temperature: { min: 60, max: Infinity } },
+    { name: 'Winter Boots', temperature: { min: -Infinity, max: 35 } },
+    { name: 'Timbs', temperature: { min: 30, max: Infinity } },
   ],
 };
 
 const OutfitRecommendation = () => {
+  const [clothingItem, setClothingItem] = useState('');
+  const [preferredTemperature, setPreferredTemperature] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('footwear');
   const [recommendedItems, setRecommendedItems] = useState({});
-
+  const [currentTemperature, setCurrentTemperature] = useState('');
+  const [cityAndState, setCityAndState] = useState('');
   const weatherData = useContext(WeatherDataContext);
   const tools = new WeatherAPITools(weatherData);
 
-  useEffect(() => {
-    const fetchWeatherAndRecommendOutfit = async () => {
-      try {
-        const currentTemp = await tools.getCurrentTemperature(); // Assuming this method exists and returns the current temperature
-        recommendOutfitBasedOnTemperature(currentTemp);
-      } catch (error) {
-        Alert.alert('Error', 'Failed to fetch weather data.');
-      }
-    };
+  const handleRecommendation = () => {
+    const temperature = parseFloat(preferredTemperature);
 
-    fetchWeatherAndRecommendOutfit();
-  }, []);
+    if (isNaN(temperature)) {
+      Alert.alert('Error', 'Please enter a valid temperature.');
+      return;
+    }
 
-  const recommendOutfitBasedOnTemperature = (temperature) => {
-    let newRecommendedItems = {};
+    const categoryItems = defaultClothingItems[selectedCategory];
+    const matchedItem = categoryItems.find(
+      (item) =>
+        temperature >= item.temperature.min &&
+        temperature <= item.temperature.max
+    );
 
-    Object.keys(defaultClothingItems).forEach((category) => {
-      const categoryItems = defaultClothingItems[category];
-      const matchedItem = categoryItems.find(
-        (item) =>
-          temperature >= item.temperature.min &&
-          temperature <= item.temperature.max
+    if (matchedItem) {
+      setRecommendedItems({
+        ...recommendedItems,
+        [selectedCategory]: matchedItem,
+      });
+    } else {
+      Alert.alert(
+        'No Recommendation',
+        `No ${selectedCategory} found for the entered temperature.`
       );
-
-      if (matchedItem) {
-        newRecommendedItems[category] = matchedItem;
-      }
-    });
-
-    setRecommendedItems(newRecommendedItems);
+      setRecommendedItems({});
+    }
   };
 
   const handleNewOutfit = () => {
+    setPreferredTemperature('');
+    setClothingItem('');
     setRecommendedItems({});
   };
 
   return (
     <View style={styles.container}>
+      <Text>Enter your preferred temperature (°F):</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Preferred Temperature"
+        keyboardType="numeric"
+        value={preferredTemperature}
+        onChangeText={(text) => setPreferredTemperature(text)}
+      />
       <Picker
         selectedValue={selectedCategory}
         style={styles.picker}
@@ -85,6 +98,15 @@ const OutfitRecommendation = () => {
         <Picker.Item label="Legs" value="legs" />
         <Picker.Item label="Upper Body" value="upperBody" />
       </Picker>
+      <TextInput
+        style={styles.input}
+        placeholder="Clothing Item"
+        value={clothingItem}
+        onChangeText={(text) => setClothingItem(text)}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleRecommendation}>
+        <Text style={styles.buttonText}>Get Recommendation</Text>
+      </TouchableOpacity>
 
       {Object.keys(recommendedItems).length > 0 && (
         <View style={styles.recommendationContainer}>
@@ -109,12 +131,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  input: {
-    borderWidth: 1,
-    padding: 10,
-    margin: 10,
-    width: 200,
-  },
   button: {
     backgroundColor: 'blue',
     padding: 10,
@@ -130,12 +146,17 @@ const styles = StyleSheet.create({
   },
   recommendationText: {
     fontWeight: 'bold',
+    fontSize: 20,
     marginBottom: 10,
   },
-  picker: {
-    height: 50,
-    width: 150,
-    borderWidth: 1,
+  temperatureText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    margin: 10,
+  },
+  locationText: {
+    fontSize: 24,
+    fontWeight: 'bold',
     margin: 10,
   },
 });
