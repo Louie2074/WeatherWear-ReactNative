@@ -11,6 +11,7 @@ import Tabs from './components/navigation/Tabs'
 import ChangeLocation from './components/ChangeLocation';
 import FirstLaunchContext from './context/FirstLaunchContext';
 
+
 const Stack = createStackNavigator();
 
 export default function App() {
