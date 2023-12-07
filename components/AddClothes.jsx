@@ -81,6 +81,11 @@ const AddClothes = ({ onAddClothes, onFinish }) => {
             <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
                 <Text style={styles.addButtonText}>Add to Wardrobe</Text>
             </TouchableOpacity>
+
+            {/* Added Go Back Button */}
+            <TouchableOpacity style={styles.backButton} onPress={onFinish}>
+                <Text style={styles.backButtonText}>Go Back</Text>
+            </TouchableOpacity>
         </KeyboardAvoidingView>
     );
 };
@@ -154,6 +159,19 @@ const styles = StyleSheet.create({
     hyphen: {
         marginHorizontal: 5,
     },
+    // Styles for the new Go Back Button
+    backButton: {
+        position: 'absolute', // Position the button absolutely
+        top: 10,             // 10 pixels from the top
+        right: 1,            // 10 pixels from the left
+        backgroundColor: 'gray',
+        borderRadius: 5,
+        padding: 10,
+    },
+    backButtonText: {
+        color: 'white',
+    },
+
 });
 
 export default AddClothes;

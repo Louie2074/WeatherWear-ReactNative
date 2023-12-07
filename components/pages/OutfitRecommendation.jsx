@@ -57,21 +57,17 @@ const OutfitRecommendation = () => {
     }
   };
 
-  //useEffect(() => {
-  //  fetchWeatherDetailsAndRecommendOutfit();
-  //}, [weatherData]);
-
   const recommendOutfitBasedOnTemperature = (temperature) => {
     let newRecommendedItems = {};
 
-    Object.keys(wardrobe).forEach((category) => {
+    Object.keys(defaultClothingItems).forEach((category) => {
+      // Merge default items with user-added items
+      const allItems = [...defaultClothingItems[category], ...(wardrobe[category] || [])];
+
       // Filter all items that match the temperature criteria
-      const matchingItems = wardrobe[category].filter((item) => {
+      const matchingItems = allItems.filter((item) => {
         const minTemp = item.temperature.min;
-        const maxTemp =
-          item.temperature.max === Infinity
-            ? Number.MAX_VALUE
-            : item.temperature.max;
+        const maxTemp = item.temperature.max === Infinity ? Number.MAX_VALUE : item.temperature.max;
 
         return temperature >= minTemp && temperature <= maxTemp;
       });
@@ -80,18 +76,15 @@ const OutfitRecommendation = () => {
       if (matchingItems.length > 0) {
         const randomIndex = Math.floor(Math.random() * matchingItems.length);
         const matchedItem = matchingItems[randomIndex];
-        newRecommendedItems[
-          category
-        ] = `${matchedItem.color} ${matchedItem.name}`;
+        newRecommendedItems[category] = `${matchedItem.color ? matchedItem.color + ' ' : ''}${matchedItem.name}`;
       } else {
-        newRecommendedItems[category] = 'No item found';
+        newRecommendedItems[category] = 'No suitable item found';
       }
     });
-    console.log(newRecommendedItems);
+
     setRecommendedItems(newRecommendedItems);
   };
 
-  // Function to add a new clothing item to the wardrobe
   const handleAddClothes = (newItem) => {
     console.log('Adding new item:', newItem);
     if (!wardrobe[newItem.category]) {
@@ -104,7 +97,6 @@ const OutfitRecommendation = () => {
         ...currentWardrobe,
         [newItem.category]: [...currentWardrobe[newItem.category], newItem],
       };
-      console.log('Updated wardrobe:', updatedWardrobe);
       return updatedWardrobe;
     });
   };
@@ -122,26 +114,21 @@ const OutfitRecommendation = () => {
           <Text style={styles.temperatureText}>
             Current Temperature: {currentTemperature}°F
           </Text>
-          {Object.keys(recommendedItems).length > 0 && (
-            <View style={styles.recommendationContainer}>
-              <Text style={styles.recommendationText}>
-                Outfit Recommendation:
-              </Text>
-              {Object.keys(recommendedItems).map((category) => {
-                // Extract the item string from recommendedItems
-                const itemString = recommendedItems[category];
-
-                return (
-                  <Text key={category}>
-                    {category.charAt(0).toUpperCase() + category.slice(1)}:
-                    {itemString !== 'No item found'
-                      ? itemString
-                      : `No suitable ${category.toLowerCase()} found`}
-                  </Text>
-                );
-              })}
-            </View>
-          )}
+          <View style={styles.recommendationContainer}>
+            <Text style={styles.recommendationText}>
+              Outfit Recommendation:
+            </Text>
+            {Object.keys(recommendedItems).length > 0 ? (
+              Object.keys(recommendedItems).map((category) => (
+                <Text key={category}>
+                  {category.charAt(0).toUpperCase() + category.slice(1)}:
+                  {recommendedItems[category]}
+                </Text>
+              ))
+            ) : (
+              <Text>No recommendations available</Text>
+            )}
+          </View>
 
           <TouchableOpacity
             style={styles.button}
