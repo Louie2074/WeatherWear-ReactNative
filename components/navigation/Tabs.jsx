@@ -3,10 +3,17 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import WeatherPage from '../pages/WeatherPage';
 import Settings from '../pages/Settings';
 import OutfitRecommendation from '../pages/OutfitRecommendation';
-
+import Wardrobe from '../pages/Wardrobe';
+import { useState } from 'react';
 const Tab = createBottomTabNavigator();
 
 function Tabs() {
+  const [wardrobe, setWardrobe] = useState({
+    Tops: [],
+    Bottoms: [],
+    Footwear: [],
+  });
+
   return (
     <Tab.Navigator sceneContainerStyle={{ marginTop: 10 }}>
       <Tab.Screen
@@ -18,15 +25,26 @@ function Tabs() {
           ),
         }}
       />
-      <Tab.Screen
+<Tab.Screen
         name="Outfits"
-        component={OutfitRecommendation}
         options={{
           tabBarIcon: ({ size }) => (
             <Ionicons name="shirt-outline" color={'#4383f9'} size={size} />
           ),
         }}
-      />
+      >
+        {() => <OutfitRecommendation wardrobe={wardrobe} setWardrobe={setWardrobe} />}
+      </Tab.Screen>
+      <Tab.Screen
+        name="Wardrobe"
+        options={{
+          tabBarIcon: ({ size }) => (
+            <Ionicons name="shirt-outline" color={'#4383f9'} size={size} />
+          ),
+        }}
+      >
+        {() => <Wardrobe wardrobe={wardrobe} />}
+      </Tab.Screen>
       <Tab.Screen
         name="Settings"
         component={Settings}

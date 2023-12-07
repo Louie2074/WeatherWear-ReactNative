@@ -28,13 +28,9 @@ const defaultClothingItems = {
   ],
 };
 
-const OutfitRecommendation = () => {
+const OutfitRecommendation = ({ wardrobe, setWardrobe }) => {
   const [addingClothes, setAddingClothes] = useState(false);
-  const [wardrobe, setWardrobe] = useState({
-    Tops: [],
-    Bottoms: [],
-    Footwear: [],
-  });
+  //
 
   const [recommendedItems, setRecommendedItems] = useState({});
   const [currentTemperature, setCurrentTemperature] = useState('');
@@ -142,7 +138,9 @@ const OutfitRecommendation = () => {
             onPress={() => setAddingClothes(true)}
           >
             <Text style={styles.buttonText}>Add Clothes</Text>
+            
           </TouchableOpacity>
+          
         </>
       )}
     </View>
