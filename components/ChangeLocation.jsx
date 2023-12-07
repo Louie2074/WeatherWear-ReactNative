@@ -60,20 +60,24 @@ const ChangeLocation = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
+    flex: 1,
   },
   textInputContainer: {
     backgroundColor: 'rgba(0,0,0,0)',
     borderTopWidth: 0,
     borderBottomWidth: 0,
-    paddingTop: 70, 
+    paddingTop: 70,
   },
   buttonContainer: {
-    backgroundColor: 'black',
+    backgroundColor: '#4383f9',
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 5,
-    padding: 50,
+    padding: 10,
+    width: '80%',
+    alignSelf: 'center',
+    marginHorizontal: '10%',
+    marginBottom:100
   },
   buttonText: {
     color: 'white',
