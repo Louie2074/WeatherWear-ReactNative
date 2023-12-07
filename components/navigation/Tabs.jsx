@@ -14,7 +14,7 @@ function Tabs() {
         component={WeatherPage}
         options={{
           tabBarIcon: ({ size }) => (
-            <Ionicons name="newspaper-outline" color={'red'} size={size} />
+            <Ionicons name="rainy-outline" color={'#4383f9'} size={size} />
           ),
         }}
       />
@@ -23,7 +23,7 @@ function Tabs() {
         component={OutfitRecommendation}
         options={{
           tabBarIcon: ({ size }) => (
-            <Ionicons name="newspaper-outline" color={'red'} size={size} />
+            <Ionicons name="shirt-outline" color={'#4383f9'} size={size} />
           ),
         }}
       />
@@ -32,7 +32,7 @@ function Tabs() {
         component={Settings}
         options={{
           tabBarIcon: ({ size }) => (
-            <Ionicons name="settings-outline" color={'red'} size={size} />
+            <Ionicons name="settings-outline" color={'#4383f9'} size={size} />
           ),
         }}
       />

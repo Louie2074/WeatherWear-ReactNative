@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
 import WeatherDataContext from '../../context/WeatherDataContext';
@@ -39,45 +39,43 @@ const OutfitRecommendation = () => {
   const [recommendedItems, setRecommendedItems] = useState({});
   const [currentTemperature, setCurrentTemperature] = useState('');
   const [cityAndState, setCityAndState] = useState('');
+
   const weatherData = useContext(WeatherDataContext);
+  const tools = new WeatherAPITools(weatherData);
 
-  const fetchWeatherDetailsAndRecommendOutfit = async () => {
-    try {
-      const tools = new WeatherAPITools(weatherData);
-      const [temp] = tools.getCurrentWeather();
-      setCurrentTemperature(temp);
-      recommendOutfitBasedOnTemperature(parseFloat(temp));
-
-      const [city, state] = tools.getLocationDetails();
-      setCityAndState(`${city}, ${state}`);
-    } catch (error) {
-      Alert.alert(
-        'Error',
-        `Failed to fetch weather data: ${error.message || error}`
-      );
-    }
-  };
+  useEffect(() => {
+    const [temp] = tools.getCurrentWeather();
+    const [city, state] = tools.getLocationDetails();
+    setCurrentTemperature(temp);
+    recommendOutfitBasedOnTemperature(parseFloat(temp));
+    setCityAndState(`${city}, ${state}`);
+  }, [weatherData]);
 
   const recommendOutfitBasedOnTemperature = (temperature) => {
     let newRecommendedItems = {};
 
     Object.keys(defaultClothingItems).forEach((category) => {
-      // Merge default items with user-added items
-      const allItems = [...defaultClothingItems[category], ...(wardrobe[category] || [])];
+      const allItems = [
+        ...defaultClothingItems[category],
+        ...(wardrobe[category] || []),
+      ];
 
-      // Filter all items that match the temperature criteria
       const matchingItems = allItems.filter((item) => {
         const minTemp = item.temperature.min;
-        const maxTemp = item.temperature.max === Infinity ? Number.MAX_VALUE : item.temperature.max;
+        const maxTemp =
+          item.temperature.max === Infinity
+            ? Number.MAX_VALUE
+            : item.temperature.max;
 
         return temperature >= minTemp && temperature <= maxTemp;
       });
 
-      // Randomly select one of the matching items
       if (matchingItems.length > 0) {
         const randomIndex = Math.floor(Math.random() * matchingItems.length);
         const matchedItem = matchingItems[randomIndex];
-        newRecommendedItems[category] = `${matchedItem.color ? matchedItem.color + ' ' : ''}${matchedItem.name}`;
+        newRecommendedItems[category] = `${
+          matchedItem.color ? matchedItem.color + ' ' : ''
+        }${matchedItem.name}`;
       } else {
         newRecommendedItems[category] = 'No suitable item found';
       }
@@ -133,7 +131,9 @@ const OutfitRecommendation = () => {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={fetchWeatherDetailsAndRecommendOutfit}
+            onPress={() =>
+              recommendOutfitBasedOnTemperature(parseFloat(currentTemperature))
+            }
           >
             <Text style={styles.buttonText}>Generate New Outfit</Text>
           </TouchableOpacity>
@@ -156,7 +156,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: '#4383f9',
+    borderWidth: 1,
+    borderColor: 'black',
     padding: 10,
     margin: 10,
     borderRadius: 5,
