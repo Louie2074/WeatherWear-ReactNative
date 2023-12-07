@@ -8,6 +8,7 @@ import * as Location from 'expo-location';
 
 const ChangeLocation = () => {
   const apiKey = REACT_APP_PLACES_API_KEY;
+  
   const navigation = useNavigation();
   const { location, setLocation } = useContext(LocationDataContext);
 
