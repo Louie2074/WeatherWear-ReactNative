@@ -37,7 +37,7 @@ export default function WeatherPage() {
         {locationDetails[0]}, {locationDetails[1]}
       </Text>
       <Text style={{ fontSize: 36, marginTop: 5 }}>{currentWeather[0]}°F</Text>
-      <Image source={Images[iconImgPath]} style={{ height: 128, width: 128 }} />
+      <Image source={Images[iconImgPath]} style={{ height: 96, width: 96 }} />
       <Text style={{ fontSize: 18, marginVertical: 2 }}>
         {currentWeather[1]}
       </Text>
