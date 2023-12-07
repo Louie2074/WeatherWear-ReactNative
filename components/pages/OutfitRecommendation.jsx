@@ -9,6 +9,7 @@ const defaultClothingItems = {
   Tops: [
     { name: 'T-shirt', temperature: { min: 60, max: Infinity } },
     { name: 'Sweatshirt', temperature: { min: 35, max: 60 } },
+    { name: 'Jacket', temperature: { min: 35, max: 45 } },
     { name: 'Tanktop', temperature: { min: 60, max: Infinity } },
     { name: 'Puffer Jacket', temperature: { min: -Infinity, max: 35 } },
     { name: 'Parka', temperature: { min: -Infinity, max: 35 } },
