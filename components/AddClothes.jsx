@@ -159,7 +159,6 @@ const styles = StyleSheet.create({
     hyphen: {
         marginHorizontal: 5,
     },
-    // Styles for the new Go Back Button
     backButton: {
         position: 'absolute', // Position the button absolutely
         top: 10,             // 10 pixels from the top
