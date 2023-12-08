@@ -1,14 +1,26 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 
-const Wardrobe = ({ wardrobe }) => {
+const Wardrobe = ({ wardrobe, setWardrobe }) => {
+    const [editMode, setEditMode] = useState(false);
+
+    const handleRemoveItem = (category, index) => {
+        setWardrobe(prev => {
+            const newItems = [...prev[category]];
+            newItems.splice(index, 1);
+            return { ...prev, [category]: newItems };
+        });
+    };
+
     return (
         <View style={styles.container}>
+            <TouchableOpacity onPress={() => setEditMode(!editMode)} style={styles.editButton}>
+                <Text>{editMode ? 'Done' : 'Edit'}</Text>
+            </TouchableOpacity>
+
             {Object.keys(wardrobe).map((category) => (
                 <View key={category} style={styles.categoryContainer}>
-                    <Text style={styles.categoryTitle}>
-                        {category}
-                    </Text>
+                    <Text style={styles.categoryTitle}>{category}</Text>
                     {wardrobe[category].length > 0 ? (
                         wardrobe[category].map((item, index) => (
                             <View key={index} style={styles.item}>
@@ -16,6 +28,14 @@ const Wardrobe = ({ wardrobe }) => {
                                 <Text style={styles.itemDetails}>
                                     Color: {item.color || 'N/A'}, Temp: {item.temperature.min}°F to {item.temperature.max}°F
                                 </Text>
+                                {editMode && (
+                                    <TouchableOpacity
+                                        onPress={() => handleRemoveItem(category, index)}
+                                        style={styles.removeButton}
+                                    >
+                                        <Text>Remove</Text>
+                                    </TouchableOpacity>
+                                )}
                             </View>
                         ))
                     ) : (
@@ -26,7 +46,6 @@ const Wardrobe = ({ wardrobe }) => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -57,6 +76,18 @@ const styles = StyleSheet.create({
     noItems: {
         fontSize: 16,
         fontStyle: 'italic',
+    },    editButton: {
+        backgroundColor: 'lightblue',
+        padding: 10,
+        borderRadius: 5,
+        alignSelf: 'flex-end',
+        marginBottom: 10,
+    },
+    removeButton: {
+        backgroundColor: 'pink',
+        padding: 5,
+        borderRadius: 5,
+        marginTop: 5,
     },
 });
 

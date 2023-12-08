@@ -45,7 +45,7 @@ function Tabs() {
           ),
         }}
       >
-        {() => <Wardrobe wardrobe={wardrobe} />}
+        {() => <Wardrobe wardrobe={wardrobe} setWardrobe={setWardrobe} />}
       </Tab.Screen>
       <Tab.Screen
         name="Settings"
