@@ -25,7 +25,7 @@ function Tabs() {
           ),
         }}
       />
-<Tab.Screen
+      <Tab.Screen
         name="Outfits"
         options={{
           tabBarIcon: ({ size }) => (
@@ -33,13 +33,15 @@ function Tabs() {
           ),
         }}
       >
-        {() => <OutfitRecommendation wardrobe={wardrobe} setWardrobe={setWardrobe} />}
+        {() => (
+          <OutfitRecommendation wardrobe={wardrobe} setWardrobe={setWardrobe} />
+        )}
       </Tab.Screen>
       <Tab.Screen
         name="Wardrobe"
         options={{
           tabBarIcon: ({ size }) => (
-            <Ionicons name="shirt-outline" color={'#4383f9'} size={size} />
+            <Ionicons name="wallet-outline" color={'#4383f9'} size={size} />
           ),
         }}
       >
