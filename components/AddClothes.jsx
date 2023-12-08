@@ -11,12 +11,29 @@ const AddClothes = ({ onAddClothes, onFinish }) => {
     const categories = ['Tops', 'Bottoms', 'Footwear'];
 
     const handleAdd = () => {
+        const minTemp = Number(minTemperature);
+        const maxTemp = Number(maxTemperature);
+
+        // Check if any of the fields are empty
+        if (!name.trim() || !minTemperature.trim() || !maxTemperature.trim() || !color.trim()) {
+            alert('All fields must be filled out.');
+            return;
+        }
+
+        // Check if min temperature is less than max temperature
+        if (minTemp >= maxTemp) {
+            alert('Minimum temperature must be less than maximum temperature.');
+            return;
+        }
+
         onAddClothes({
             name,
             category,
-            temperature: { min: Number(minTemperature), max: Number(maxTemperature) },
+            temperature: { min: minTemp, max: maxTemp },
             color
         });
+
+        // Resetting the state values
         setName('');
         setCategory('Tops');
         setMinTemperature('');
@@ -170,7 +187,6 @@ const styles = StyleSheet.create({
     backButtonText: {
         color: 'white',
     },
-
 });
 
 export default AddClothes;
