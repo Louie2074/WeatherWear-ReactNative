@@ -30,7 +30,6 @@ const defaultClothingItems = {
 
 const OutfitRecommendation = ({ wardrobe, setWardrobe }) => {
   const [addingClothes, setAddingClothes] = useState(false);
-  //
 
   const [recommendedItems, setRecommendedItems] = useState({});
   const [currentTemperature, setCurrentTemperature] = useState('');

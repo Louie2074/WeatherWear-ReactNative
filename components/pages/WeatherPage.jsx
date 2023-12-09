@@ -1,15 +1,12 @@
-import { useContext, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useContext } from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import WeatherAPITools from '../../utils/weatherTools';
 import WeatherDataContext from '../../context/WeatherDataContext';
-import { useNavigation } from '@react-navigation/native';
 import Images from '../../utils/imgIndex';
 
 export default function WeatherPage() {
   const weatherData = useContext(WeatherDataContext);
   const weatherTools = new WeatherAPITools(weatherData);
-
-  const navigation = useNavigation();
 
   if (!weatherData) {
     return <Text style={styles.centerAlignText}>Loading weather data...</Text>;

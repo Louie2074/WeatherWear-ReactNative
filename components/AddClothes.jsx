@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, StyleShe
 
 const AddClothes = ({ onAddClothes, onFinish }) => {
     const [name, setName] = useState('');
-    const [category, setCategory] = useState('Tops'); // Default category
+    const [category, setCategory] = useState('Tops'); 
     const [minTemperature, setMinTemperature] = useState('');
     const [maxTemperature, setMaxTemperature] = useState('');
     const [color, setColor] = useState('');
@@ -14,13 +14,10 @@ const AddClothes = ({ onAddClothes, onFinish }) => {
         const minTemp = Number(minTemperature);
         const maxTemp = Number(maxTemperature);
 
-        // Check if any of the fields are empty
         if (!name.trim() || !minTemperature.trim() || !maxTemperature.trim() || !color.trim()) {
             alert('All fields must be filled out.');
             return;
         }
-
-        // Check if min temperature is less than max temperature
         if (minTemp >= maxTemp) {
             alert('Minimum temperature must be less than maximum temperature.');
             return;
@@ -33,13 +30,11 @@ const AddClothes = ({ onAddClothes, onFinish }) => {
             color
         });
 
-        // Resetting the state values
         setName('');
         setCategory('Tops');
         setMinTemperature('');
         setMaxTemperature('');
         setColor('');
-        
         onFinish();
     };
 
@@ -99,7 +94,6 @@ const AddClothes = ({ onAddClothes, onFinish }) => {
                 <Text style={styles.addButtonText}>Add to Wardrobe</Text>
             </TouchableOpacity>
 
-            {/* Added Go Back Button */}
             <TouchableOpacity style={styles.backButton} onPress={onFinish}>
                 <Text style={styles.backButtonText}>Go Back</Text>
             </TouchableOpacity>
@@ -113,7 +107,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         padding: 20,
-        paddingTop: 40, // Adjusted top padding
+        paddingTop: 40, 
         backgroundColor: '#f5f5f5',
     },
     input: {
@@ -177,9 +171,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
     backButton: {
-        position: 'absolute', // Position the button absolutely
-        top: 10,             // 10 pixels from the top
-        right: 1,            // 10 pixels from the left
+        position: 'absolute',
+        top: 10,             
+        right: 1,            
         backgroundColor: 'gray',
         borderRadius: 5,
         padding: 10,
